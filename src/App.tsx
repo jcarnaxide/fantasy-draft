@@ -1,9 +1,9 @@
 import './App.css'
-import { Diagnostics } from './dev/Diagnostics'
+import { TestPicker } from './dev/TestPicker'
 
 function App() {
   return (
-    <Diagnostics />
+    <TestPicker />
   )
 }
 

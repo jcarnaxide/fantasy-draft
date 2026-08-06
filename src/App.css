@@ -182,3 +182,6 @@
     border-right-color: var(--border);
   }
 }
+
+.row { padding: 4px 8px; }
+.row-active { background: #2563eb; color: white; }
