@@ -16,6 +16,7 @@ export type Player = {
   positionRank: number | null;
   team: Team;
   byeWeek: number | null;
+  depthChartRank: number | null;   // 1 = starter at his position
 };
 
 export type RawCsvRow = Partial<{
@@ -32,6 +33,34 @@ export type ParseError = {
   raw: RawCsvRow;
   reason: string;
 };
+
+export type Manager = {
+  id: string;
+  name: string;
+}
+
+export type DraftSettings = {
+  rounds: number;
+  managers: Manager[];   // index = draft slot, order matters
+  myManagerId: string;   // which one is you, for defaults in the roster view
+};
+
+export type Pick = {
+  playerId: PlayerId;
+  timestamp: number;
+}
+
+export type DraftState = {
+  settings: DraftSettings;
+  picks: (Pick | null)[];
+  history: (Pick | null)[][];
+};
+
+export type Action =
+  | { type: 'setPick'; pickNumber: number; playerId: PlayerId; isKeeper?: boolean; pickedAt?: number }
+  | { type: 'clearPick'; pickNumber: number }
+  | { type: 'undo' }
+  | { type: 'reset' };
 
 export function normalizeName(raw: string): string {
   return raw
