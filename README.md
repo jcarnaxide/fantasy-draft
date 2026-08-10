@@ -1,75 +1,42 @@
-# React + TypeScript + Vite
+# fantasy-draft
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A single-page assistant for running a **live, in-person** fantasy football draft. The real draft happens on a whiteboard with stickers; this app runs alongside it as a personal tool to track every pick as it happens, keep the pool of available players current, and help you decide who to take when you're on the clock.
 
-Currently, two official plugins are available:
+Built with React 19 + TypeScript + Vite. Everything runs locally in the browser — no backend, no accounts. Draft state and the player pool persist to `localStorage`, so a refresh (or a closed laptop) won't lose the board.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## League setup
 
-## React Compiler
+- 12-manager snake draft (order reverses each round).
+- 16 rounds.
+- Managers and which one is *you* (`myManagerId`) are configured in `defaultSettings` in `src/App.tsx`.
+- Rankings come from a bundled FantasyPros 2026 CSV, enriched with depth-chart data (`src/data/`).
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Using it during a draft
 
-## Expanding the ESLint configuration
+- **Record picks as they happen.** The player search box (top right) targets whoever is on the clock. Type a name, use ↑/↓ to highlight, `Enter` to commit. Typing anywhere on the page jumps focus back to that box.
+- **Available players** stay in sync — drafted players drop out automatically, grouped by position and tier.
+- **Edit any slot** by clicking its cell on the board: set, replace, or clear the player there.
+- **Undo** reverts the last change (in-memory history; not persisted across reloads).
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Keepers
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+Keepers are entered **in advance, before pick 1**, using manual slot entry: click the board cell for the round/manager that owns the keeper and choose the player. Tick **★ Keeper** in that editor to mark it — keeper cells show a gold star and outline so they're easy to tell apart from live picks. You can toggle the flag on an already-placed player without re-picking them.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## Development
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+```bash
+npm install
+npm run dev      # start the dev server
+npm run build    # type-check + production build
+npm run lint     # eslint
+npx vitest       # run unit tests
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### Project layout
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
-```
+- `src/App.tsx` — top-level wiring, league settings, the on-the-clock picker, and the cell editor.
+- `src/draft/` — draft logic: `state.ts` (reducer), `snake.ts` (snake-order math), `selectors.ts`.
+- `src/components/` — `DraftBoard`, `PickCell`, `PlayerPicker`, `AvailablePlayers`.
+- `src/parse.ts` / `src/parseDepthCharts.ts` — CSV parsing.
+- `src/storage.ts` — `localStorage` persistence and integrity checks.
+- `src/data/` — bundled rankings and depth-chart CSVs.

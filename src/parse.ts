@@ -72,6 +72,7 @@ function parseRow(row: RawCsvRow): Player | string {
     positionRank: pos.positionRank,
     team,
     byeWeek: toInt(row['BYE WEEK']),
+    depthChartRank: null,   // enriched later by withDepthCharts
   };
 }
 

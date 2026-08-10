@@ -28,6 +28,7 @@ export function draftReducer(state: DraftState, action: Action): DraftState {
       const pick: Pick = {
         playerId: action.playerId,
         timestamp: action.pickedAt ?? Date.now(),
+        isKeeper: action.isKeeper ?? false,
       };
 
       return {
@@ -64,7 +65,10 @@ export function draftReducer(state: DraftState, action: Action): DraftState {
     }
 
     default: {
+      // Compile-time exhaustiveness guard: adding a new Action variant without a
+      // case above makes this assignment fail. At runtime, unknown actions no-op.
       const exhaustive: never = action;
+      void exhaustive;
       return state;
     }
   }

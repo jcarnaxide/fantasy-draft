@@ -4,8 +4,6 @@ import { parseRows } from './parse';
 const DRAFT_KEY = 'draft-v1';
 const POOL_KEY = 'pool-v1';
 const POOL_TTL_MS = 30 * 60 * 1000; // 30 minutes
-const DEPTH_KEY = 'depth-v1';
-const DEPTH_TTL_MS = 24 * 60 * 60 * 1000; // depth charts move far slower than rankings
 
 /** DraftState minus history, which is intentionally not persisted. */
 type PersistedDraft = Omit<DraftState, 'history'>;

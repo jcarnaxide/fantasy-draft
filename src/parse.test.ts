@@ -25,6 +25,7 @@ describe('parseRows', () => {
         positionRank: 2,
         team: 'ATL',
         byeWeek: 11,
+        depthChartRank: null,
       },
     ]);
   });

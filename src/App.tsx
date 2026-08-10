@@ -42,6 +42,7 @@ export default function App() {
   const [players, setPlayers] = useState<Player[]>([]);
   const [poolFetchedAt, setPoolFetchedAt] = useState<number | null>(null);
   const [editingSlot, setEditingSlot] = useState<number | null>(null);
+  const [editingKeeper, setEditingKeeper] = useState(false);
 
   const mainPickerRef = useRef<PlayerPickerHandle>(null);
 
@@ -108,8 +109,13 @@ export default function App() {
     [players, draftedBy]
   );
 
-  function handleSelect(playerId: PlayerId, slot: number) {
-    dispatch({ type: 'setPick', pickNumber: slot, playerId });
+  function handleSelect(playerId: PlayerId, slot: number, isKeeper = false) {
+    dispatch({ type: 'setPick', pickNumber: slot, playerId, isKeeper });
+  }
+
+  function openEditor(slot: number) {
+    setEditingKeeper(draft.picks[slot]?.isKeeper ?? false);
+    setEditingSlot(slot);
   }
 
   function closeEditor() {
@@ -118,8 +124,25 @@ export default function App() {
   }
 
   function handleEditorSelect(playerId: PlayerId, slot: number) {
-    handleSelect(playerId, slot);
+    handleSelect(playerId, slot, editingKeeper);
     closeEditor();
+  }
+
+  // Toggle the keeper flag. If the slot already holds a player, re-apply it
+  // immediately (preserving the timestamp) so the star updates without a re-pick.
+  function handleKeeperToggle(checked: boolean) {
+    setEditingKeeper(checked);
+    if (editingSlot === null) return;
+    const existing = draft.picks[editingSlot];
+    if (existing) {
+      dispatch({
+        type: 'setPick',
+        pickNumber: editingSlot,
+        playerId: existing.playerId,
+        isKeeper: checked,
+        pickedAt: existing.timestamp,
+      });
+    }
   }
 
   const editingLabel =
@@ -177,7 +200,7 @@ export default function App() {
         settings={draft.settings}
         playersById={playersById}
         currentSlot={currentSlot}
-        onCellClick={setEditingSlot}
+        onCellClick={openEditor}
       />
 
       <AvailablePlayers
@@ -193,6 +216,14 @@ export default function App() {
           <div className="app__editor" onClick={(e) => e.stopPropagation()}>
             <div className="app__editor-header">
               <span>{editingLabel}</span>
+              <label className="app__editor-keeper">
+                <input
+                  type="checkbox"
+                  checked={editingKeeper}
+                  onChange={(e) => handleKeeperToggle(e.target.checked)}
+                />
+                ★ Keeper
+              </label>
               {draft.picks[editingSlot] !== null && (
                 <button
                   type="button"

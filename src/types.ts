@@ -48,6 +48,7 @@ export type DraftSettings = {
 export type Pick = {
   playerId: PlayerId;
   timestamp: number;
+  isKeeper?: boolean;   // entered in advance, before the draft starts
 }
 
 export type DraftState = {

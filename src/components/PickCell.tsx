@@ -1,4 +1,4 @@
-import type { Player, Pick, PlayerId } from '../types';
+import type { Player, Pick } from '../types';
 import { POSITION_COLORS } from './positionColors';
 
 type PickCellProps = {
@@ -22,14 +22,22 @@ export function PickCell({ pickNumber, pick, player, isCurrent, onClick }: PickC
   const classNames = ['pick-cell'];
   if (isCurrent) classNames.push('pick-cell--current');
   if (pick && !player) classNames.push('pick-cell--orphaned');
+  if (pick?.isKeeper) classNames.push('pick-cell--keeper');
+
+  const title = player
+    ? `${player.name} · ${player.position} · ${player.team}${pick?.isKeeper ? ' · keeper' : ''}`
+    : `Pick ${pickNumber + 1}`;
 
   return (
     <td
       className={classNames.join(' ')}
       style={{ background }}
       onClick={() => onClick(pickNumber)}
-      title={player ? `${player.name} · ${player.position} · ${player.team}` : `Pick ${pickNumber + 1}`}
+      title={title}
     >
+      {pick?.isKeeper && (
+        <span className="pick-cell__keeper" aria-label="keeper">★</span>
+      )}
       {pick === null ? (
         <span className="pick-cell__number">{pickNumber + 1}</span>
       ) : player ? (
