@@ -117,8 +117,8 @@ export default function App() {
     poolFetchedAt === null ? null : Math.floor((Date.now() - poolFetchedAt) / 60000);
 
   const available = useMemo(
-    () => getAvailablePlayers(players, draftedBy),
-    [players, draftedBy]
+    () => getAvailablePlayers(enriched, draftedBy),
+    [enriched, draftedBy]
   );
 
   function handleSelect(playerId: PlayerId, slot: number, isKeeper = false) {

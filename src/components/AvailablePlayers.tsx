@@ -19,6 +19,24 @@ type TierGroup = {
   players: Player[];
 };
 
+/** Depth-chart rank as a color-coded badge: starter (1), backup (2), deeper (3+). */
+function DepthBadge({ player }: { player: Player }) {
+  const depth = player.depthChartRank;
+  if (depth === null) return <span className="row__depth" />;
+
+  const tier = depth === 1 ? 'starter' : depth === 2 ? 'backup' : 'deep';
+  const role = depth === 1 ? 'starter' : depth === 2 ? 'backup' : `#${depth} on depth chart`;
+
+  return (
+    <span
+      className={`row__depth row__depth--${tier}`}
+      title={`${player.team} ${player.position} depth: ${role}`}
+    >
+      {depth}
+    </span>
+  );
+}
+
 /** Assumes `players` is already sorted by overall rank. */
 function groupByTier(players: Player[]): TierGroup[] {
   const groups: TierGroup[] = [];
@@ -109,6 +127,13 @@ function PositionColumn({ position, players, limit, onPick, canPick }: PositionC
         <span className="column__count">{players.length}</span>
       </header>
 
+      <div className="column__legend">
+        <span>Player</span>
+        <span className="column__legend-num">Dep</span>
+        <span className="column__legend-num">Pos</span>
+        <span className="column__legend-num">Ovr</span>
+      </div>
+
       <div className="column__body">
         {groups.map((group, i) => (
           <div key={`${group.tier ?? 'none'}-${i}`} className="tier">
@@ -125,9 +150,7 @@ function PositionColumn({ position, players, limit, onPick, canPick }: PositionC
                 title={`${player.name} · ${player.team}${player.byeWeek !== null ? ` · bye ${player.byeWeek}` : ''}`}
               >
                 <span className="row__name">{player.name}</span>
-                <span className="row__depth">
-                  {player.depthChartRank === null ? '' : `${player.position}${player.depthChartRank}`}
-                </span>
+                <DepthBadge player={player} />
                 <span className="row__posrank">
                   {player.positionRank ?? '—'}
                 </span>
