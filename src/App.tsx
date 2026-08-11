@@ -44,6 +44,7 @@ export default function App() {
   const [poolFetchedAt, setPoolFetchedAt] = useState<number | null>(null);
   const [editingSlot, setEditingSlot] = useState<number | null>(null);
   const [editingKeeper, setEditingKeeper] = useState(false);
+  const [confirmingClear, setConfirmingClear] = useState(false);
 
   const mainPickerRef = useRef<PlayerPickerHandle>(null);
 
@@ -71,7 +72,7 @@ export default function App() {
   // Typing anywhere reclaims focus for the main picker, unless a cell is being edited.
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
-      if (editingSlot !== null) return;
+      if (editingSlot !== null || confirmingClear) return;
       if (e.ctrlKey || e.metaKey || e.altKey) return;
       if (e.key.length !== 1) return;
 
@@ -83,7 +84,7 @@ export default function App() {
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [editingSlot]);
+  }, [editingSlot, confirmingClear]);
 
   const playersById = useMemo(
     () => new Map(enriched.map((p) => [p.id, p])),
@@ -101,6 +102,11 @@ export default function App() {
   );
 
   const currentSlot = getCurrentSlot(draft.picks);
+
+  const pickCount = useMemo(
+    () => draft.picks.filter((p) => p !== null).length,
+    [draft.picks]
+  );
 
   const orphans = useMemo(
     () => (enriched.length > 0 ? findOrphanedPicks(draft, enriched) : []),
@@ -174,6 +180,14 @@ export default function App() {
             disabled={draft.history.length === 0}
           >
             Undo
+          </button>
+          <button
+            type="button"
+            className="app__clear"
+            onClick={() => setConfirmingClear(true)}
+            disabled={pickCount === 0}
+          >
+            Clear board
           </button>
         </div>
 
@@ -254,6 +268,33 @@ export default function App() {
               onSelect={handleEditorSelect}
               onCancel={closeEditor}
             />
+          </div>
+        </div>
+      )}
+
+      {confirmingClear && (
+        <div className="app__editor-backdrop" onClick={() => setConfirmingClear(false)}>
+          <div className="app__confirm" onClick={(e) => e.stopPropagation()}>
+            <p className="app__confirm-message">
+              Clear the entire board? This removes all {pickCount} pick
+              {pickCount === 1 ? '' : 's'} (including keepers) and can&apos;t be undone.
+            </p>
+            <div className="app__confirm-actions">
+              <button type="button" onClick={() => setConfirmingClear(false)}>
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="app__confirm-danger"
+                onClick={() => {
+                  dispatch({ type: 'reset' });
+                  setConfirmingClear(false);
+                  mainPickerRef.current?.focus();
+                }}
+              >
+                Clear board
+              </button>
+            </div>
           </div>
         </div>
       )}

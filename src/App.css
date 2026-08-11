@@ -178,6 +178,41 @@
   box-shadow: 0 8px 24px rgba(0,0,0,0.25);
 }
 
+.app__clear { color: #b91c1c; }
+.app__clear:disabled { color: inherit; }
+
+.app__confirm {
+  background: white;
+  padding: 16px;
+  border-radius: 6px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+  max-width: 320px;
+}
+
+.app__confirm-message {
+  font-size: 14px;
+  line-height: 1.4;
+  color: #1a1a1a;
+  margin-bottom: 14px;
+}
+
+.app__confirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.app__confirm-danger {
+  background: #dc2626;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.app__confirm-danger:hover { background: #b91c1c; }
+
 .app__editor-header {
   display: flex;
   justify-content: space-between;
