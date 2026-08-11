@@ -2,7 +2,15 @@
   padding: 12px 16px;
 }
 
+.app__main {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
 .draft-board {
+  flex: 1 1 auto;
+  min-width: 0;
   overflow: auto;
   max-height: 35vh;
 }
@@ -188,6 +196,93 @@
   font-weight: 500;
   color: #ca8a04;
   cursor: pointer;
+}
+
+/* --- my roster panel ----------------------------------------------------- */
+
+.roster {
+  flex: 0 0 320px;
+  border: 1px solid #d4d4d4;
+  border-radius: 4px;
+  background: white;
+  padding: 6px 8px;
+  box-sizing: border-box;
+}
+
+.roster__title {
+  font-size: 13px;
+  margin: 0 0 6px;
+}
+
+.roster__columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  align-items: start;
+}
+
+.roster__group {
+  margin-bottom: 8px;
+}
+
+.roster__group-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.roster__group-count { font-weight: 400; opacity: 0.7; }
+
+.roster__row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 6px;
+  align-items: center;
+  padding: 2px 6px;
+  font-size: 12px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.roster__row--starter { font-weight: 600; color: #1a1a1a; }
+.roster__row--bench { color: #94a3b8; }
+
+.roster__row--empty {
+  color: #cbd5e1;
+  font-style: italic;
+  font-weight: 400;
+}
+
+.roster__name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.roster__rank { font-size: 11px; color: #94a3b8; }
+.roster__empty-label { font-size: 11px; }
+
+.roster__checks {
+  display: flex;
+  gap: 14px;
+  margin-top: 4px;
+  padding-top: 6px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.roster__check {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  cursor: default;
+}
+
+.roster__check-pos {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: 3px;
+  color: #1a1a1a;
 }
 
 .available { margin-top: 10px; }

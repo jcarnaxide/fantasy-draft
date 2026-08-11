@@ -4,7 +4,7 @@ import depthCsvText from './data/FantasyPros_Fantasy_Football_2026_Depth_Charts.
 import { useReducer, useEffect, useState, useMemo, useRef } from 'react';
 import { draftReducer, createInitialState } from './draft/state';
 import { getCurrentSlot } from './draft/snake';
-import { getAvailablePlayers, getDraftedBy } from './draft/selectors';
+import { getAvailablePlayers, getDraftedBy, getManagerRoster } from './draft/selectors';
 import { loadDraft, saveDraft, loadPlayerPool, savePlayerPool, findOrphanedPicks } from './storage';
 import { DraftBoard } from './components/DraftBoard';
 import { PlayerPicker, type PlayerPickerHandle } from './components/PlayerPicker';
@@ -12,6 +12,7 @@ import type { Player, PlayerId, DraftSettings } from './types';
 import './App.css';
 import { parseDepthCharts, withDepthCharts } from './parseDepthCharts';
 import { AvailablePlayers } from './components/AvailablePlayers';
+import { RosterPanel } from './components/RosterPanel';
 
 const defaultSettings: DraftSettings = { 
   rounds: 16,
@@ -92,6 +93,11 @@ export default function App() {
   const draftedBy = useMemo(
     () => getDraftedBy(draft.picks, draft.settings),
     [draft.picks, draft.settings]
+  );
+
+  const myRoster = useMemo(
+    () => getManagerRoster(draft.picks, draft.settings, draft.settings.myManagerId, playersById),
+    [draft.picks, draft.settings, playersById]
   );
 
   const currentSlot = getCurrentSlot(draft.picks);
@@ -195,13 +201,16 @@ export default function App() {
         </div>
       )}
 
-      <DraftBoard
-        picks={draft.picks}
-        settings={draft.settings}
-        playersById={playersById}
-        currentSlot={currentSlot}
-        onCellClick={openEditor}
-      />
+      <div className="app__main">
+        <DraftBoard
+          picks={draft.picks}
+          settings={draft.settings}
+          playersById={playersById}
+          currentSlot={currentSlot}
+          onCellClick={openEditor}
+        />
+        <RosterPanel roster={myRoster} />
+      </div>
 
       <AvailablePlayers
         available={available}
